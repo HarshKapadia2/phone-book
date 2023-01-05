@@ -1,0 +1,7 @@
+vscode:
+  extensions:
+    - llvm-vs-code-extensions.vscode-clangd
+    - esbenp.prettier-vscode
+    - redhat.vscode-yaml
+    - streetsidesoftware.code-spell-checker
+    - vscode-icons-team.vscode-icons
