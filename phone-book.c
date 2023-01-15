@@ -35,17 +35,17 @@ void handleCommand(char command[]) {
 
     // Check if a string exists at the 1st array position
     if(parsedCommand[0] == NULL) {
-        printf("Use 'pb help' for usage.\n");
+        printError(PARAMETER_NOT_PASSED, "pb", "");
         return;
     }
     // Check if the first string is 'pb'
     if(strcmp(parsedCommand[0], "pb") != 0) {
-        printf("Command should start with 'pb'. Use 'pb help' for usage.\n");
+        printError(INCORRECT_PARAMETER, "pb", parsedCommand[0]);
         return;
     }
     // Check if a string exists at the 2nd array position
     if(parsedCommand[1] == NULL) {
-        printf("Command type/option not passed. Use 'pb help' for usage.\n");
+        printError(PARAMETER_NOT_PASSED, "<command_type>", "");
         return;
     }
 
@@ -67,19 +67,19 @@ void handleCommand(char command[]) {
 
         // Check if a string exists at the 3rd array position
         if(parsedCommand[2] == NULL) {
-            printf("Flag to 'find' command not passed. Use 'pb help' for usage.\n");
+            printError(PARAMETER_NOT_PASSED, "-n/-e", "");
             return;
         }
 
         // Handle flags
         if(strcmp(parsedCommand[2], "-n") == 0) { // Find record(s) using first name
-        printf("Find record(s) using first name\n");
+            printf("Find record(s) using first name\n");
         }
         else if(strcmp(parsedCommand[2], "-e") == 0) { // Find single record using e-mail
             printf("Find single record using e-mail\n");
         }
         else {
-            printf("Incorrect flag to 'find' command. Use 'pb help' for usage.\n");
+            printError(INCORRECT_PARAMETER, "-n/-e", parsedCommand[2]);
         }
     }
     else if(strcmp(parsedCommand[1], "exit") == 0) { // Exit program
@@ -90,7 +90,7 @@ void handleCommand(char command[]) {
         printHelp();
     }
     else {
-        printf("Incorrect command type. Use 'pb help' for usage.\n");
+        printError(INCORRECT_PARAMETER, "<command_type>", parsedCommand[1]);
     }
 }
 
@@ -124,6 +124,21 @@ char **parseCommand(char command[]) {
     }
 
     return parsedCommand;
+}
+
+// Prints error
+void printError(enum error_state err_state, char *expected_string, char *incorrect_string) {
+    switch (err_state) {
+        case -100:
+            printf("Incorrect parameter passed. Expected '%s', but got '%s'. Use 'pb help' for usage.\n", expected_string, incorrect_string);
+            break;
+        case -101:
+            printf("Parameter not passed. Expected '%s', but got '%s'. Use 'pb help' for usage.\n", expected_string, incorrect_string);
+            break;
+        default:
+            printf("Error.\n");
+            break;
+    }
 }
 
 // Prints command help
