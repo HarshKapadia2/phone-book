@@ -3,9 +3,6 @@
 #include <stdlib.h>
 #include "declarations.h"
 
-#define BUFFER_LENGTH 100
-#define MAX_NO_OF_PARSED_PARAMETERS 6
-
 int main() {
     run_phone_book();
     return 0;

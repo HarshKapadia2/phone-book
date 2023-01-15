@@ -11,3 +11,7 @@ void handle_command(char command_buffer[]);
 char **parse_command(char command[]);
 void print_error(enum error_state err_state, char *expected_string, char *incorrect_string);
 void print_help();
+
+// Constant definitions
+#define BUFFER_LENGTH 100
+#define MAX_NO_OF_PARSED_PARAMETERS 6
