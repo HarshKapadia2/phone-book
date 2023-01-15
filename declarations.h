@@ -1,7 +1,8 @@
 // Enumerator defintion
 enum error_state {
     INCORRECT_PARAMETER = -100,
-    PARAMETER_NOT_PASSED = -101
+    PARAMETER_NOT_PASSED = -101,
+    MEMORY_NOT_ALLOCATED = -102
 };
 
 // Function declarations

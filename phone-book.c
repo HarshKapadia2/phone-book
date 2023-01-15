@@ -8,7 +8,6 @@
 
 int main() {
     runPhoneBook();
-    
     return 0;
 }
 
@@ -20,8 +19,6 @@ void runPhoneBook() {
     printf("Use 'pb help' for usage.\n");
 
     while(1) {
-        int choice = 0;
-
         printf("\n$ ");
         fgets(command_buffer, sizeof(command_buffer), stdin);
 
@@ -33,6 +30,10 @@ void runPhoneBook() {
 void handleCommand(char command[]) {
     char **parsed_command = parseCommand(command);
 
+    // Check if `parsed_command` is NULL
+    if(parsed_command == NULL) {
+        return;
+    }
     // Check if a string exists at the 1st array position
     if(parsed_command[0] == NULL) {
         printError(PARAMETER_NOT_PASSED, "pb", "");
@@ -92,13 +93,22 @@ void handleCommand(char command[]) {
     else {
         printError(INCORRECT_PARAMETER, "<command_type>", parsed_command[1]);
     }
+
+    // Free `parsed_command`, as it has now been worked on and is thus not of further use
+    free(parsed_command);
 }
 
 // Splits the command string on whitespaces
 char **parseCommand(char command[]) {
     char *command_ptr = command;
     char **parsed_command = malloc(sizeof(char *) * MAX_NO_OF_PARSED_PARAMETERS);
-    char delimiter = ' ';
+    char delimiter = ' '; // Whitespace
+
+    // Check if memory was allocated
+    if (parsed_command == NULL) {
+        printError(MEMORY_NOT_ALLOCATED, NULL, NULL);
+        return NULL;
+    }
 
     for (int i = 0; i < MAX_NO_OF_PARSED_PARAMETERS; i++) {
         char *token = strsep(&command_ptr, &delimiter);
@@ -112,13 +122,22 @@ char **parseCommand(char command[]) {
                 parsed_command[i - 1][strlen(token) - 1] = '\0';
                 
                 if(strlen(parsed_command[i - 1]) == 0) {
-                    // Edge case for inputs like 'find ' (whitespace at end)
+                    // Edge case for inputs like 'find ' (A single Whitespace at the end of the command string)
                     parsed_command[i - 1] = NULL;
                 }
             }
         }
         else {
             parsed_command[i] = malloc(sizeof(char *) * BUFFER_LENGTH);
+
+            // Check if memory was allocated
+            if (parsed_command[i] == NULL) {
+                printError(MEMORY_NOT_ALLOCATED, NULL, NULL);
+                free(parsed_command); // Remove previously allocated memory as it is now useless
+
+                return NULL;
+            }
+
             parsed_command[i] = token;
         }
     }
@@ -134,6 +153,9 @@ void printError(enum error_state err_state, char *expected_string, char *incorre
             break;
         case -101:
             printf("Parameter not passed. Expected '%s', but got '%s'. Use 'pb help' for usage.\n", expected_string, incorrect_string);
+            break;
+        case -102:
+            printf("Memory could not be allocated. Try again.\n");
             break;
         default:
             printf("Error.\n");
