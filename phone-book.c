@@ -7,12 +7,12 @@
 #define MAX_NO_OF_PARSED_PARAMETERS 6
 
 int main() {
-    runPhoneBook();
+    run_phone_book();
     return 0;
 }
 
 // Driver loop for the phone book
-void runPhoneBook() {
+void run_phone_book() {
     char command_buffer[BUFFER_LENGTH];
 
     printf("Phone Book\n\n");
@@ -22,13 +22,13 @@ void runPhoneBook() {
         printf("\n$ ");
         fgets(command_buffer, sizeof(command_buffer), stdin);
 
-        handleCommand(command_buffer);
+        handle_command(command_buffer);
     }
 }
 
 // Calls the appropriate command function depending on the command and flag, and passes the parsed command to that function
-void handleCommand(char command[]) {
-    char **parsed_command = parseCommand(command);
+void handle_command(char command[]) {
+    char **parsed_command = parse_command(command);
 
     // Check if `parsed_command` is NULL
     if(parsed_command == NULL) {
@@ -36,17 +36,17 @@ void handleCommand(char command[]) {
     }
     // Check if a string exists at the 1st array position
     if(parsed_command[0] == NULL) {
-        printError(PARAMETER_NOT_PASSED, "pb", "");
+        print_error(PARAMETER_NOT_PASSED, "pb", "");
         return;
     }
     // Check if the first string is 'pb'
     if(strcmp(parsed_command[0], "pb") != 0) {
-        printError(INCORRECT_PARAMETER, "pb", parsed_command[0]);
+        print_error(INCORRECT_PARAMETER, "pb", parsed_command[0]);
         return;
     }
     // Check if a string exists at the 2nd array position
     if(parsed_command[1] == NULL) {
-        printError(PARAMETER_NOT_PASSED, "<command_type>", "");
+        print_error(PARAMETER_NOT_PASSED, "<command_type>", "");
         return;
     }
 
@@ -68,7 +68,7 @@ void handleCommand(char command[]) {
 
         // Check if a string exists at the 3rd array position
         if(parsed_command[2] == NULL) {
-            printError(PARAMETER_NOT_PASSED, "-n/-e", "");
+            print_error(PARAMETER_NOT_PASSED, "-n/-e", "");
             return;
         }
 
@@ -80,7 +80,7 @@ void handleCommand(char command[]) {
             printf("Find single record using e-mail\n");
         }
         else {
-            printError(INCORRECT_PARAMETER, "-n/-e", parsed_command[2]);
+            print_error(INCORRECT_PARAMETER, "-n/-e", parsed_command[2]);
         }
     }
     else if(strcmp(parsed_command[1], "exit") == 0) { // Exit program
@@ -88,10 +88,10 @@ void handleCommand(char command[]) {
         exit(0);
     }
     else if(strcmp(parsed_command[1], "help") == 0) { // Print help
-        printHelp();
+        print_help();
     }
     else {
-        printError(INCORRECT_PARAMETER, "<command_type>", parsed_command[1]);
+        print_error(INCORRECT_PARAMETER, "<command_type>", parsed_command[1]);
     }
 
     // Free `parsed_command`, as it has now been worked on and is thus not of further use
@@ -99,14 +99,14 @@ void handleCommand(char command[]) {
 }
 
 // Splits the command string on whitespaces
-char **parseCommand(char command[]) {
+char **parse_command(char command[]) {
     char *command_ptr = command;
     char **parsed_command = malloc(sizeof(char *) * MAX_NO_OF_PARSED_PARAMETERS);
     char delimiter = ' '; // Whitespace
 
     // Check if memory was allocated
     if (parsed_command == NULL) {
-        printError(MEMORY_NOT_ALLOCATED, NULL, NULL);
+        print_error(MEMORY_NOT_ALLOCATED, NULL, NULL);
         return NULL;
     }
 
@@ -132,7 +132,7 @@ char **parseCommand(char command[]) {
 
             // Check if memory was allocated
             if (parsed_command[i] == NULL) {
-                printError(MEMORY_NOT_ALLOCATED, NULL, NULL);
+                print_error(MEMORY_NOT_ALLOCATED, NULL, NULL);
                 free(parsed_command); // Remove previously allocated memory as it is now useless
 
                 return NULL;
@@ -146,7 +146,7 @@ char **parseCommand(char command[]) {
 }
 
 // Prints error
-void printError(enum error_state err_state, char *expected_string, char *incorrect_string) {
+void print_error(enum error_state err_state, char *expected_string, char *incorrect_string) {
     switch (err_state) {
         case -100:
             printf("Incorrect parameter passed. Expected '%s', but got '%s'. Use 'pb help' for usage.\n", expected_string, incorrect_string);
@@ -164,7 +164,7 @@ void printError(enum error_state err_state, char *expected_string, char *incorre
 }
 
 // Prints command help
-void printHelp() {
+void print_help() {
     printf("Usage: pb [TYPE] [FLAG]... [DATA]...\n");
     printf("Use the phone book to add, update, delete or find records.\n\n");
     printf("Actions:\n");

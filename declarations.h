@@ -6,8 +6,8 @@ enum error_state {
 };
 
 // Function declarations
-void runPhoneBook();
-void handleCommand(char command_buffer[]);
-char **parseCommand(char command[]);
-void printError(enum error_state err_state, char *expected_string, char *incorrect_string);
-void printHelp();
+void run_phone_book();
+void handle_command(char command_buffer[]);
+char **parse_command(char command[]);
+void print_error(enum error_state err_state, char *expected_string, char *incorrect_string);
+void print_help();
