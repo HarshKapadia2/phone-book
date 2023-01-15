@@ -31,99 +31,99 @@ void runPhoneBook() {
 
 // Calls the appropriate command function depending on the command and flag, and passes the parsed command to that function
 void handleCommand(char command[]) {
-    char **parsedCommand = parseCommand(command);
+    char **parsed_command = parseCommand(command);
 
     // Check if a string exists at the 1st array position
-    if(parsedCommand[0] == NULL) {
+    if(parsed_command[0] == NULL) {
         printError(PARAMETER_NOT_PASSED, "pb", "");
         return;
     }
     // Check if the first string is 'pb'
-    if(strcmp(parsedCommand[0], "pb") != 0) {
-        printError(INCORRECT_PARAMETER, "pb", parsedCommand[0]);
+    if(strcmp(parsed_command[0], "pb") != 0) {
+        printError(INCORRECT_PARAMETER, "pb", parsed_command[0]);
         return;
     }
     // Check if a string exists at the 2nd array position
-    if(parsedCommand[1] == NULL) {
+    if(parsed_command[1] == NULL) {
         printError(PARAMETER_NOT_PASSED, "<command_type>", "");
         return;
     }
 
     // Handle command types
-    if(strcmp(parsedCommand[1], "display") == 0) { // Display all records
+    if(strcmp(parsed_command[1], "display") == 0) { // Display all records
         printf("Display all records\n");
     }
-    else if(strcmp(parsedCommand[1], "add") == 0) { // Add single record
+    else if(strcmp(parsed_command[1], "add") == 0) { // Add single record
         printf("Add single record\n");
     }
-    else if(strcmp(parsedCommand[1], "update") == 0) { // Update single record
+    else if(strcmp(parsed_command[1], "update") == 0) { // Update single record
         printf("Update single record\n");
     }
-    else if(strcmp(parsedCommand[1], "delete") == 0) { // Delete single record
+    else if(strcmp(parsed_command[1], "delete") == 0) { // Delete single record
         printf("Delete single record\n");
     }
-    else if(strcmp(parsedCommand[1], "find") == 0) { // Find record(s)
+    else if(strcmp(parsed_command[1], "find") == 0) { // Find record(s)
         printf("Find record(s)\n");
 
         // Check if a string exists at the 3rd array position
-        if(parsedCommand[2] == NULL) {
+        if(parsed_command[2] == NULL) {
             printError(PARAMETER_NOT_PASSED, "-n/-e", "");
             return;
         }
 
         // Handle flags
-        if(strcmp(parsedCommand[2], "-n") == 0) { // Find record(s) using first name
+        if(strcmp(parsed_command[2], "-n") == 0) { // Find record(s) using first name
             printf("Find record(s) using first name\n");
         }
-        else if(strcmp(parsedCommand[2], "-e") == 0) { // Find single record using e-mail
+        else if(strcmp(parsed_command[2], "-e") == 0) { // Find single record using e-mail
             printf("Find single record using e-mail\n");
         }
         else {
-            printError(INCORRECT_PARAMETER, "-n/-e", parsedCommand[2]);
+            printError(INCORRECT_PARAMETER, "-n/-e", parsed_command[2]);
         }
     }
-    else if(strcmp(parsedCommand[1], "exit") == 0) { // Exit program
+    else if(strcmp(parsed_command[1], "exit") == 0) { // Exit program
         printf("Phone book shut down.\n");
         exit(0);
     }
-    else if(strcmp(parsedCommand[1], "help") == 0) { // Print help
+    else if(strcmp(parsed_command[1], "help") == 0) { // Print help
         printHelp();
     }
     else {
-        printError(INCORRECT_PARAMETER, "<command_type>", parsedCommand[1]);
+        printError(INCORRECT_PARAMETER, "<command_type>", parsed_command[1]);
     }
 }
 
 // Splits the command string on whitespaces
 char **parseCommand(char command[]) {
     char *command_ptr = command;
-    char **parsedCommand = malloc(sizeof(char *) * MAX_NO_OF_PARSED_PARAMETERS);
+    char **parsed_command = malloc(sizeof(char *) * MAX_NO_OF_PARSED_PARAMETERS);
     char delimiter = ' ';
 
     for (int i = 0; i < MAX_NO_OF_PARSED_PARAMETERS; i++) {
         char *token = strsep(&command_ptr, &delimiter);
 
         if (token == NULL) { // The command string is completely parsed
-            parsedCommand[i] = NULL; // Making a Character Pointer (char *) null
+            parsed_command[i] = NULL; // Making a Character Pointer (char *) null
             
-            if(parsedCommand[i - 1] != NULL) {
+            if(parsed_command[i - 1] != NULL) {
                 // Remove the '\n' from the last non-null token
-                token = parsedCommand[i - 1];
-                parsedCommand[i - 1][strlen(token) - 1] = '\0';
+                token = parsed_command[i - 1];
+                parsed_command[i - 1][strlen(token) - 1] = '\0';
                 
-                if(strlen(parsedCommand[i - 1]) == 0) {
+                if(strlen(parsed_command[i - 1]) == 0) {
                     // Edge case for inputs like 'find ' (whitespace at end)
-                    parsedCommand[i - 1] = NULL;
+                    parsed_command[i - 1] = NULL;
                 }
             }
         }
         else {
-            parsedCommand[i] = malloc(sizeof(char *) * BUFFER_LENGTH);
-            parsedCommand[i] = token;
+            parsed_command[i] = malloc(sizeof(char *) * BUFFER_LENGTH);
+            parsed_command[i] = token;
         }
     }
 
-    return parsedCommand;
+    return parsed_command;
 }
 
 // Prints error
