@@ -1,15 +1,10 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include "declarations.h"
 
 #define BUFFER_LENGTH 100
 #define MAX_NO_OF_PARSED_PARAMETERS 6
-
-// Function declarations
-void runPhoneBook();
-void handleCommand(char command_buffer[]);
-char **parseCommand(char command[]);
-void printHelp();
 
 int main() {
     runPhoneBook();
