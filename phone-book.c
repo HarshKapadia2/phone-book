@@ -95,6 +95,29 @@ void handle_command(char command[]) {
     free(parsed_command);
 }
 
+// Creates a new phone record
+struct record *create_record(char **parsed_command) {
+    struct record *new_record = NULL;
+
+    if (!are_all_parameters_existing(parsed_command, 2, 4)) {
+        return NULL;
+    }
+
+    new_record = malloc(sizeof(struct record));
+
+    if (new_record == NULL) {
+        print_error(MEMORY_NOT_ALLOCATED, NULL, NULL);
+        return NULL;
+    }
+
+    new_record->first_name = parsed_command[2];
+    new_record->last_name = parsed_command[3];
+    new_record->email = parsed_command[4];
+    new_record->phone_no = parsed_command[5];
+
+    return new_record;
+}
+
 // Splits the command string on whitespaces
 char **parse_command(char command[]) {
     char *command_ptr = command;
@@ -142,6 +165,38 @@ char **parse_command(char command[]) {
     return parsed_command;
 }
 
+// Check if the required number of parameters exist in the entire (or a part of the) command
+// Minimum `start_index` value is zero
+int are_all_parameters_existing(char **parsed_command, int start_index, int expected_parameter_count) {
+    int actual_count = 0;
+
+    // Check input values
+    if (start_index < 0 || expected_parameter_count < 0) {
+        return FALSE;
+    }
+
+    for(int i = start_index; i < MAX_NO_OF_PARSED_PARAMETERS; i++) {
+        if (parsed_command[i] != NULL) {
+            actual_count++;
+        }
+    }
+
+    if (actual_count == expected_parameter_count) {
+        return TRUE;
+    }
+    else {
+        char expected_parameter_count_buffer[COUNT_BUFFER_LENGTH];
+        char actual_count_buffer[COUNT_BUFFER_LENGTH];
+        
+        snprintf(expected_parameter_count_buffer, COUNT_BUFFER_LENGTH, "%d", expected_parameter_count);
+        snprintf(actual_count_buffer, COUNT_BUFFER_LENGTH, "%d", actual_count);
+
+        print_error(INSUFFICIENT_PARAMETER_COUNT, expected_parameter_count_buffer, actual_count_buffer);
+
+        return FALSE;
+    }
+}
+
 // Prints error
 void print_error(enum error_state err_state, char *expected_string, char *incorrect_string) {
     switch (err_state) {
@@ -153,6 +208,9 @@ void print_error(enum error_state err_state, char *expected_string, char *incorr
             break;
         case -102:
             printf("Memory could not be allocated. Try again.\n");
+            break;
+        case -103:
+            printf("Insufficient number of parameters passed. Expected %s parameters, but got %s. Use 'pb help' for usage.\n", expected_string, incorrect_string);
             break;
         default:
             printf("Error.\n");
