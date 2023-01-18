@@ -1,3 +1,10 @@
+// Constant definitions
+#define BUFFER_LENGTH 100
+#define MAX_NO_OF_PARSED_PARAMETERS 6
+#define TRUE 1
+#define FALSE 0
+#define COUNT_BUFFER_LENGTH 3
+
 // Enumerator defintion
 enum error_state {
     INCORRECT_PARAMETER = -100,
@@ -22,10 +29,3 @@ char **parse_command(char command[]);
 int are_all_parameters_existing(char **parsed_command, int check_start_index, int no_of_parameters);
 void print_error(enum error_state err_state, char *expected_string, char *incorrect_string);
 void print_help();
-
-// Constant definitions
-#define BUFFER_LENGTH 100
-#define MAX_NO_OF_PARSED_PARAMETERS 6
-#define TRUE 1
-#define FALSE 0
-#define COUNT_BUFFER_LENGTH 3
