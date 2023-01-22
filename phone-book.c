@@ -34,17 +34,17 @@ void handle_command(char command[]) {
     }
     // Check if a string exists at the 1st array position
     if (parsed_command[0] == NULL) {
-        print_error(PARAMETER_NOT_PASSED, "pb", "");
+        print_error(COMMAND_PARAMETER_NOT_PASSED, "pb", "");
         return;
     }
     // Check if the first string is 'pb'
     if (strcmp(parsed_command[0], "pb") != 0) {
-        print_error(INCORRECT_PARAMETER, "pb", parsed_command[0]);
+        print_error(INCORRECT_COMMAND_PARAMETER, "pb", parsed_command[0]);
         return;
     }
     // Check if a string exists at the 2nd array position
     if (parsed_command[1] == NULL) {
-        print_error(PARAMETER_NOT_PASSED, "<command_type>", "");
+        print_error(COMMAND_PARAMETER_NOT_PASSED, "<command_type>", "");
         return;
     }
 
@@ -67,7 +67,7 @@ void handle_command(char command[]) {
 
         // Check if a string exists at the 3rd array position
         if (parsed_command[2] == NULL) {
-            print_error(PARAMETER_NOT_PASSED, "-n/-e", "");
+            print_error(COMMAND_PARAMETER_NOT_PASSED, "-n/-e", "");
             return;
         }
 
@@ -79,7 +79,8 @@ void handle_command(char command[]) {
             // Find single record using e-mail
             printf("Find single record using e-mail\n");
         } else {
-            print_error(INCORRECT_PARAMETER, "-n/-e", parsed_command[2]);
+            print_error(INCORRECT_COMMAND_PARAMETER, "-n/-e",
+                        parsed_command[2]);
         }
     } else if (strcmp(parsed_command[1], "exit") == 0) {
         // Exit program
@@ -89,7 +90,8 @@ void handle_command(char command[]) {
         // Print help
         print_help();
     } else {
-        print_error(INCORRECT_PARAMETER, "<command_type>", parsed_command[1]);
+        print_error(INCORRECT_COMMAND_PARAMETER, "<command_type>",
+                    parsed_command[1]);
     }
 
     // Free `parsed_command`, as it has now been worked on and is thus not of
@@ -179,6 +181,8 @@ int are_all_parameters_existing(char **parsed_command, int start_index,
 
     // Check input values
     if (start_index < 0 || expected_parameter_count < 0) {
+        print_error(INCORRECT_FUNCTION_PARAMETER, "are_all_parameters_existing",
+                    NULL);
         return FALSE;
     }
 
@@ -229,6 +233,10 @@ void print_error(enum error_state err_state, char *expected_string,
             "Insufficient number of parameters passed. Expected %s parameters, "
             "but got %s. Use 'pb help' for usage.\n",
             expected_string, incorrect_string);
+        break;
+    case -104:
+        printf("Incorrect parameter(s) passed to function `%s()`.\n",
+               expected_string);
         break;
     default:
         printf("Error.\n");

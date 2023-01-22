@@ -7,18 +7,19 @@
 
 // Enumerator defintion
 enum error_state {
-  INCORRECT_PARAMETER = -100,
-  PARAMETER_NOT_PASSED = -101,
-  MEMORY_NOT_ALLOCATED = -102,
-  INSUFFICIENT_PARAMETER_COUNT = -103
+    INCORRECT_COMMAND_PARAMETER = -100,
+    COMMAND_PARAMETER_NOT_PASSED = -101,
+    MEMORY_NOT_ALLOCATED = -102,
+    INSUFFICIENT_PARAMETER_COUNT = -103,
+    INCORRECT_FUNCTION_PARAMETER = -104
 };
 
 // Structure definition
 struct record {
-  char *first_name;
-  char *last_name;
-  char *email; // Unique
-  char *phone_no;
+    char *first_name;
+    char *last_name;
+    char *email; // Unique
+    char *phone_no;
 };
 
 // Function declarations
