@@ -53,8 +53,7 @@ void handle_command(char command[]) {
         // Display all records
         printf("Display all records\n");
     } else if (strcmp(parsed_command[1], "add") == 0) {
-        // Add single record
-        printf("Add single record\n");
+        add_record(parsed_command); // Add single record
     } else if (strcmp(parsed_command[1], "update") == 0) {
         // Update single record
         printf("Update single record\n");
@@ -99,7 +98,85 @@ void handle_command(char command[]) {
     free(parsed_command);
 }
 
-// Creates a new phone record
+// Handles creating and adding phone record to file
+int add_record(char **parsed_command) {
+    struct record *new_record = create_record(parsed_command);
+
+    if (new_record == NULL) {
+        print_error(RECORD_ADDITION_ERROR, NULL, NULL);
+        return FALSE;
+    }
+
+    // Check if e-mail is unique
+    if (is_record_existing(new_record->email)) {
+        print_error(RECORD_ADDITION_ERROR, NULL, NULL);
+        return FALSE;
+    }
+
+    // Write record to file
+    int is_record_saved = save_record_to_file(new_record);
+
+    if (is_record_saved) {
+        printf("Record added to phone book.\n");
+        free(new_record); // Free the record structure memory
+        return TRUE;
+    } else {
+        print_error(RECORD_ADDITION_ERROR, NULL, NULL);
+        free(new_record); // Free the record structure memory
+        return FALSE;
+    }
+}
+
+// Appends a phone record to the file
+int save_record_to_file(struct record *phone_record) {
+    FILE *file = fopen(RECORD_STORE_FILE_NAME, "a"); // Append
+
+    if (file == NULL) {
+        print_error(FILE_OPENING_ERROR, NULL, NULL);
+        return FALSE;
+    }
+
+    // Add data to file
+    fprintf(file, "%s %s %s %s\n", phone_record->first_name,
+            phone_record->last_name, phone_record->email,
+            phone_record->phone_no);
+
+    fclose(file); // Close the file
+
+    return TRUE;
+}
+
+// Gets a single record structure based on an e-mail
+// `email` is a unique field
+struct record *get_record_based_on_email(char *email) {
+    FILE *file = fopen(RECORD_STORE_FILE_NAME, "r"); // Read
+
+    if (file == NULL) {
+        print_error(FILE_OPENING_ERROR, NULL, NULL);
+        return NULL;
+    }
+
+    while (!feof(file)) {
+        char data_buffer[BUFFER_LENGTH];
+        char command_buffer[BUFFER_LENGTH] = "pb add ";
+
+        fgets(data_buffer, sizeof(data_buffer), file);
+
+        // Construct command so that `create_record()` gets required format
+        memmove(command_buffer + 7, data_buffer, BUFFER_LENGTH - 7);
+
+        char **parsed_command = parse_command(command_buffer);
+
+        // Check if the e-mails match
+        if (strcmp(parsed_command[4], email) == 0) {
+            return create_record(parsed_command);
+        }
+    }
+
+    return NULL;
+}
+
+// Creates a new phone record structure
 struct record *create_record(char **parsed_command) {
     struct record *new_record = NULL;
 
@@ -167,10 +244,29 @@ char **parse_command(char command[]) {
             }
 
             parsed_command[i] = token;
+
+            if (i + 1 == MAX_NO_OF_PARSED_PARAMETERS &&
+                parsed_command[i][strlen(token) - 1] == '\n') {
+                // Remove the '\n' from the last non-null token
+                parsed_command[i][strlen(token) - 1] = '\0';
+            }
         }
     }
 
     return parsed_command;
+}
+
+// Checks if a record is existing based on whether the e-mail exists in the
+// phone book
+int is_record_existing(char *email) {
+    struct record *phone_record = get_record_based_on_email(email);
+
+    if (phone_record == NULL) {
+        return FALSE;
+    } else {
+        print_error(DUPLICATE_RECORD_ERROR, phone_record->email, NULL);
+        return TRUE;
+    }
 }
 
 // Check if the required number of parameters exist in the entire (or a part of
@@ -237,6 +333,17 @@ void print_error(enum error_state err_state, char *expected_string,
     case -104:
         printf("Incorrect parameter(s) passed to function `%s()`.\n",
                expected_string);
+        break;
+    case -105:
+        printf("File '%s' could not be opened.\n", RECORD_STORE_FILE_NAME);
+        break;
+    case -106:
+        printf("The phone record could not be added to the phone book.\n");
+        break;
+    case -107:
+        printf(
+            "A record with the e-mail '%s' already exists in the phone book.\n",
+            expected_string);
         break;
     default:
         printf("Error.\n");
