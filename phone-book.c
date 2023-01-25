@@ -51,15 +51,15 @@ void handle_command(char command[]) {
     // Handle command types
     if (strcmp(parsed_command[1], "display") == 0) {
         // Display all records
-        printf("Display all records\n");
+        printf("To do: Display all records.\n");
     } else if (strcmp(parsed_command[1], "add") == 0) {
         add_record(parsed_command); // Add single record
     } else if (strcmp(parsed_command[1], "update") == 0) {
         // Update single record
-        printf("Update single record\n");
+        printf("To do: Update single record.\n");
     } else if (strcmp(parsed_command[1], "delete") == 0) {
         // Delete single record
-        printf("Delete single record\n");
+        printf("To do: Delete single record.\n");
     } else if (strcmp(parsed_command[1], "find") == 0) {
         find_records(parsed_command); // Find record(s)
     } else if (strcmp(parsed_command[1], "exit") == 0) {
@@ -140,7 +140,7 @@ int find_records(char **parsed_command) {
     } else if (strcmp(parsed_command[2], "-n") == 0) {
         // Find record(s) using `first_name`
 
-        printf("TO DO: Find record(s) using first name.\n");
+        printf("To do: Find record(s) using first name.\n");
         return TRUE;
     } else {
         print_error(INCORRECT_COMMAND_PARAMETER, "-n/-e", parsed_command[2]);
