@@ -297,9 +297,15 @@ int are_all_parameters_existing(char **parsed_command, int start_index,
     int actual_count = 0;
 
     // Check input values
-    if (start_index < 0 || expected_parameter_count < 0) {
+    if (start_index < 0) {
         print_error(INCORRECT_FUNCTION_PARAMETER, "are_all_parameters_existing",
-                    NULL);
+                    "start_index");
+    }
+    if (expected_parameter_count < 0) {
+        print_error(INCORRECT_FUNCTION_PARAMETER, "are_all_parameters_existing",
+                    "expected_parameter_count");
+    }
+    if (start_index < 0 || expected_parameter_count < 0) {
         return FALSE;
     }
 
@@ -353,8 +359,8 @@ void print_error(enum error_state err_state, char *expected_string,
                expected_string, incorrect_string);
         break;
     case -104:
-        printf("Incorrect parameter(s) passed to function `%s()`.\n",
-               expected_string);
+        printf("Incorrect parameter '%s' passed to function '%s()'.\n",
+               incorrect_string, expected_string);
         break;
     case -105:
         printf("File '%s' could not be opened.\n", RECORD_STORE_FILE_NAME);
@@ -371,7 +377,7 @@ void print_error(enum error_state err_state, char *expected_string,
         printf("The phone record(s) could not be displayed.\n");
         break;
     case -109:
-        printf("The phone record(s) with %s '%s' could not be found.\n",
+        printf("The phone record(s) with the %s '%s' could not be found.\n",
                expected_string, incorrect_string);
         break;
     default:
