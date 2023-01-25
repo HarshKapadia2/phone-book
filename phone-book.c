@@ -61,33 +61,13 @@ void handle_command(char command[]) {
         // Delete single record
         printf("Delete single record\n");
     } else if (strcmp(parsed_command[1], "find") == 0) {
-        // Find record(s)
-        printf("Find record(s)\n");
-
-        // Check if a string exists at the 3rd array position
-        if (parsed_command[2] == NULL) {
-            print_error(COMMAND_PARAMETER_NOT_PASSED, "-n/-e", "");
-            return;
-        }
-
-        // Handle flags
-        if (strcmp(parsed_command[2], "-n") == 0) {
-            // Find record(s) using first name
-            printf("Find record(s) using first name\n");
-        } else if (strcmp(parsed_command[2], "-e") == 0) {
-            // Find single record using e-mail
-            printf("Find single record using e-mail\n");
-        } else {
-            print_error(INCORRECT_COMMAND_PARAMETER, "-n/-e",
-                        parsed_command[2]);
-        }
+        find_records(parsed_command); // Find record(s)
     } else if (strcmp(parsed_command[1], "exit") == 0) {
         // Exit program
         printf("Phone book shut down.\n");
         exit(0);
     } else if (strcmp(parsed_command[1], "help") == 0) {
-        // Print help
-        print_help();
+        print_help(); // Print help
     } else {
         print_error(INCORRECT_COMMAND_PARAMETER, "<command_type>",
                     parsed_command[1]);
@@ -123,6 +103,47 @@ int add_record(char **parsed_command) {
     } else {
         print_error(RECORD_ADDITION_ERROR, NULL, NULL);
         free(new_record); // Free the record structure memory
+        return FALSE;
+    }
+}
+
+// Displays one record based on `email` or multiple records based on
+// `first_name` (if present)
+int find_records(char **parsed_command) {
+    // Check if a string exists at the 3rd array position
+    if (parsed_command[2] == NULL) {
+        print_error(COMMAND_PARAMETER_NOT_PASSED, "-n/-e", "");
+        return FALSE;
+    }
+
+    // Handle flags
+    if (strcmp(parsed_command[2], "-e") == 0) {
+        // Find single record using `email`
+
+        // Check if all parameters exist
+        if (!are_all_parameters_existing(parsed_command, 3, 1)) {
+            print_error(RECORD_DISPLAY_ERROR, NULL, NULL);
+            return FALSE;
+        }
+
+        // Get required phone record
+        struct record *required_record =
+            get_record_based_on_email(parsed_command[3]);
+
+        if (required_record != NULL) {
+            print_record(required_record);
+            return TRUE;
+        } else {
+            print_error(RECORD_NOT_FOUND, "e-mail", parsed_command[3]);
+            return FALSE;
+        }
+    } else if (strcmp(parsed_command[2], "-n") == 0) {
+        // Find record(s) using `first_name`
+
+        printf("TO DO: Find record(s) using first name.\n");
+        return TRUE;
+    } else {
+        print_error(INCORRECT_COMMAND_PARAMETER, "-n/-e", parsed_command[2]);
         return FALSE;
     }
 }
@@ -283,9 +304,12 @@ int are_all_parameters_existing(char **parsed_command, int start_index,
     }
 
     for (int i = start_index; i < MAX_NO_OF_PARSED_PARAMETERS; i++) {
-        if (parsed_command[i] != NULL) {
-            actual_count++;
+        if (actual_count == expected_parameter_count ||
+            parsed_command[i] == NULL) {
+            break;
         }
+
+        actual_count++;
     }
 
     if (actual_count == expected_parameter_count) {
@@ -310,10 +334,9 @@ void print_error(enum error_state err_state, char *expected_string,
                  char *incorrect_string) {
     switch (err_state) {
     case -100:
-        printf(
-            "Incorrect parameter passed. Expected '%s', but got '%s'. Use 'pb "
-            "help' for usage.\n",
-            expected_string, incorrect_string);
+        printf("Incorrect parameter(s) passed. Expected '%s', but got '%s'. "
+               "Use 'pb help' for usage.\n",
+               expected_string, incorrect_string);
         break;
     case -101:
         printf(
@@ -325,10 +348,9 @@ void print_error(enum error_state err_state, char *expected_string,
         printf("Memory could not be allocated. Try again.\n");
         break;
     case -103:
-        printf(
-            "Insufficient number of parameters passed. Expected %s parameters, "
-            "but got %s. Use 'pb help' for usage.\n",
-            expected_string, incorrect_string);
+        printf("Insufficient number of parameters passed. Expected %s "
+               "parameter(s), but got %s. Use 'pb help' for usage.\n",
+               expected_string, incorrect_string);
         break;
     case -104:
         printf("Incorrect parameter(s) passed to function `%s()`.\n",
@@ -345,10 +367,25 @@ void print_error(enum error_state err_state, char *expected_string,
             "A record with the e-mail '%s' already exists in the phone book.\n",
             expected_string);
         break;
+    case -108:
+        printf("The phone record(s) could not be displayed.\n");
+        break;
+    case -109:
+        printf("The phone record(s) with %s '%s' could not be found.\n",
+               expected_string, incorrect_string);
+        break;
     default:
         printf("Error.\n");
         break;
     }
+}
+
+// Prints a phone record
+void print_record(struct record *phone_record) {
+    printf("First name: %s\n", phone_record->first_name);
+    printf("Last name: %s\n", phone_record->last_name);
+    printf("e-mail: %s\n", phone_record->email);
+    printf("Phone no.: %s\n", phone_record->phone_no);
 }
 
 // Prints command help

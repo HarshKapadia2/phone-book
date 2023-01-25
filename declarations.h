@@ -15,7 +15,9 @@ enum error_state {
     INCORRECT_FUNCTION_PARAMETER = -104,
     FILE_OPENING_ERROR = -105,
     RECORD_ADDITION_ERROR = -106,
-    DUPLICATE_RECORD_ERROR = -107
+    DUPLICATE_RECORD_ERROR = -107,
+    RECORD_DISPLAY_ERROR = -108,
+    RECORD_NOT_FOUND = -109
 };
 
 // Structure definition
@@ -30,6 +32,7 @@ struct record {
 void run_phone_book();
 void handle_command(char command_buffer[]);
 int add_record(char **parsed_command);
+int find_records(char **parsed_command);
 int save_record_to_file(struct record *phone_record);
 struct record *get_record_based_on_email(char *email);
 struct record *create_record(char **parsed_command);
@@ -39,4 +42,5 @@ int are_all_parameters_existing(char **parsed_command, int check_start_index,
                                 int no_of_parameters);
 void print_error(enum error_state err_state, char *expected_string,
                  char *incorrect_string);
+void print_record(struct record *phone_record);
 void print_help();
