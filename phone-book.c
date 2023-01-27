@@ -1,4 +1,5 @@
 #include "declarations.h"
+#include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -173,6 +174,12 @@ int save_record_to_file(struct record *phone_record) {
 struct record *get_record_based_on_email(char *email) {
     FILE *file = fopen(RECORD_STORE_FILE_NAME, "r"); // Read
 
+    if (file == NULL && errno == ENOENT) {
+        // Implies that the file does not exist
+
+        // print_error(FILE_DOES_NOT_EXIST_ERROR, NULL, NULL);
+        return NULL;
+    }
     if (file == NULL) {
         print_error(FILE_OPENING_ERROR, NULL, NULL);
         return NULL;
@@ -194,6 +201,8 @@ struct record *get_record_based_on_email(char *email) {
             return create_record(parsed_command);
         }
     }
+
+    fclose(file); // Close the file
 
     return NULL;
 }
@@ -364,7 +373,7 @@ void print_error(enum error_state err_state, char *expected_string,
                incorrect_string, expected_string);
         break;
     case -105:
-        printf("File '%s' could not be opened.\n", RECORD_STORE_FILE_NAME);
+        printf("The file '%s' could not be opened.\n", RECORD_STORE_FILE_NAME);
         break;
     case -106:
         printf("The phone record could not be added to the phone book.\n");
@@ -380,6 +389,9 @@ void print_error(enum error_state err_state, char *expected_string,
     case -109:
         printf("The phone record(s) with the %s '%s' could not be found.\n",
                expected_string, incorrect_string);
+        break;
+    case -110:
+        printf("The file '%s' does not exist.\n", RECORD_STORE_FILE_NAME);
         break;
     default:
         printf("Error.\n");

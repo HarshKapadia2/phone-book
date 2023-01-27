@@ -17,7 +17,8 @@ enum error_state {
     RECORD_ADDITION_ERROR = -106,
     DUPLICATE_RECORD_ERROR = -107,
     RECORD_DISPLAY_ERROR = -108,
-    RECORD_NOT_FOUND = -109
+    RECORD_NOT_FOUND = -109,
+    FILE_DOES_NOT_EXIST_ERROR = -110
 };
 
 // Structure definition
