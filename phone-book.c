@@ -132,6 +132,7 @@ int find_records(char **parsed_command) {
 
         if (required_record != NULL) {
             print_record(required_record);
+            free(required_record);
             return TRUE;
         } else {
             print_error(RECORD_NOT_FOUND, "e-mail", parsed_command[3]);
