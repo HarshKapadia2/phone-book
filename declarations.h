@@ -18,7 +18,8 @@ enum error_state {
     DUPLICATE_RECORD_ERROR = -107,
     RECORD_DISPLAY_ERROR = -108,
     RECORD_NOT_FOUND = -109,
-    FILE_DOES_NOT_EXIST_ERROR = -110
+    FILE_DOES_NOT_EXIST_ERROR = -110,
+    RECORDS_DO_NOT_EXIST_ERROR = -111
 };
 
 // Structure definition
@@ -34,6 +35,7 @@ void run_phone_book();
 void handle_command(char command_buffer[]);
 int add_record(char **parsed_command);
 int find_records(char **parsed_command);
+int display_all_records();
 int save_record_to_file(struct record *phone_record);
 struct record *get_record_based_on_email(char *email);
 struct record *create_record(char **parsed_command);

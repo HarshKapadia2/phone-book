@@ -51,8 +51,7 @@ void handle_command(char command[]) {
 
     // Handle command types
     if (strcmp(parsed_command[1], "display") == 0) {
-        // Display all records
-        printf("To do: Display all records.\n");
+        display_all_records(); // Display all records
     } else if (strcmp(parsed_command[1], "add") == 0) {
         add_record(parsed_command); // Add single record
     } else if (strcmp(parsed_command[1], "update") == 0) {
@@ -148,6 +147,60 @@ int find_records(char **parsed_command) {
         print_error(INCORRECT_COMMAND_PARAMETER, "-n/-e", parsed_command[2]);
         return FALSE;
     }
+}
+
+int display_all_records() {
+    FILE *file = fopen(RECORD_STORE_FILE_NAME, "r"); // Read
+
+    if (file == NULL && errno == ENOENT) {
+        // Implies that the file does not exist
+
+        print_error(FILE_DOES_NOT_EXIST_ERROR, NULL, NULL);
+        print_error(RECORD_DISPLAY_ERROR, NULL, NULL);
+
+        return FALSE;
+    }
+    if (file == NULL) {
+        print_error(FILE_OPENING_ERROR, NULL, NULL);
+        return FALSE;
+    }
+
+    while (!feof(file)) {
+        char data_buffer[BUFFER_LENGTH];
+        char command_buffer[BUFFER_LENGTH] = "pb add ";
+
+        fgets(data_buffer, sizeof(data_buffer), file);
+
+        // To do: Why is it reqd. to set `data_buffer[0] = '\0'` below?
+        if (data_buffer[0] == '\0') {
+            continue;
+        }
+
+        // Check if existing file has data
+        if (strlen(data_buffer) <= 1) {
+            print_error(RECORDS_DO_NOT_EXIST_ERROR, NULL, NULL);
+            return FALSE;
+        }
+
+        // Construct command so that `create_record()` gets required format
+        memmove(command_buffer + 7, data_buffer, BUFFER_LENGTH - 7);
+
+        char **parsed_command = parse_command(command_buffer);
+
+        // Create record
+        struct record *phone_record = create_record(parsed_command);
+
+        print_record(phone_record); // Print record
+        printf("---\n");
+
+        free(phone_record); // Free record memory after printing it
+
+        data_buffer[0] = '\0';
+    }
+
+    fclose(file); // Close the file
+
+    return TRUE;
 }
 
 // Appends a phone record to the file
@@ -392,6 +445,9 @@ void print_error(enum error_state err_state, char *expected_string,
         break;
     case -110:
         printf("The file '%s' does not exist.\n", RECORD_STORE_FILE_NAME);
+        break;
+    case -111:
+        printf("Phone book empty. There are no records.\n");
         break;
     default:
         printf("Error.\n");
