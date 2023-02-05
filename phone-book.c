@@ -467,18 +467,25 @@ void print_record(struct record *phone_record) {
 void print_help() {
     printf("Usage: pb [TYPE] [FLAG]... [DATA]...\n");
     printf("Use the phone book to add, update, delete or find records.\n\n");
+    printf("NOTE:\n");
+    printf(
+        "- e-mail IDs are unique, so duplicate e-mail IDs are not allowed.\n");
+    printf("- Commands are whitespace-sensitive, so data should not contain "
+           "whitespaces.\n\n");
     printf("Actions:\n");
-    printf("- To display all records: pb display\n");
-    printf("- To add a record: pb add <first_name> <last_name> <unique_email> "
+    printf("- Display all records: pb display\n");
+    printf("- Add a record: pb add <first_name> <last_name> <unique_email> "
            "<phone_number>\n");
-    printf("- To update a record: pb update <first_name> <last_name> "
-           "<email_of_record_to_update> <phone_number>\n");
-    printf("- To delete a record: pb delete <email_of_record_to_delete>\n");
-    printf("- To find record(s) using a first name: pb find -n "
-           "<first_name_of_records_to_find>\n");
-    printf("- To find a record using an e-mail: pb find -e "
+    printf("- Find a record using an e-mail: pb find -e "
            "<email_of_record_to_find>\n");
-    printf("- To exit: pb exit\n");
-    printf("- To display command help: pb help\n");
-    printf("\nEg: pb add selena gomez sg@selenagomez.com +1(xxx)xxx-xxxx\n");
+    printf("- (To do) Update a record: pb update <first_name> <last_name> "
+           "<email_of_record_to_update> <phone_number>\n");
+    printf(
+        "- (To do) Delete a record: pb delete <email_of_record_to_delete>\n");
+    printf("- (To do) Find record(s) using a first name: pb find -n "
+           "<first_name_of_records_to_find>\n");
+    printf("- Exit phone book: pb exit\n");
+    printf("- Display command help: pb help\n\n");
+    printf("Eg:\n");
+    printf("pb add selena gomez sg@selenagomez.com +1(xxx)xxx-xxxx\n");
 }
